@@ -1,117 +1,319 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Para Ti 💖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti 💖</title>
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #ff758c, #ff7eb3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Georgia', serif;
-      overflow: hidden;
-      color: white;
-      text-align: center;
-    }
+<style>
+:root { --rosa:#ff3366; }
 
-    .card {
-      background: rgba(255, 255, 255, 0.18);
-      padding: 40px;
-      border-radius: 20px;
-      max-width: 380px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
+* { box-sizing:border-box; }
 
-    button {
-      margin-top: 20px;
-      padding: 12px 25px;
-      font-size: 1em;
-      border: none;
-      border-radius: 30px;
-      background: #ff3366;
-      color: white;
-      cursor: pointer;
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Georgia', serif;
+  background: #0d0d1a;
+  color: white;
+  padding: 1rem;
+}
 
-    #carta {
-      margin-top: 20px;
-      font-size: 1.1em;
-      line-height: 1.6;
-      white-space: pre-line;
-      min-height: 120px;
-    }
+/* Fondo */
+#fondo {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(120deg,#0d0d1a,#1a1a2e,#0d0d1a);
+  z-index:-2;
+}
+.aurora {
+  position:absolute;
+  width:300%;
+  height:200%;
+  top:-50%;
+  left:-100%;
+  background:radial-gradient(circle,rgba(255,100,180,.25),transparent 70%);
+  filter:blur(60px);
+  animation:auroraMove 18s infinite alternate;
+}
+@keyframes auroraMove { to{transform:rotate(25deg) translate(120px,60px);} }
 
-    .heart {
-      position: absolute;
-      font-size: 24px;
-      animation: float 4s linear infinite;
-    }
+/* Estrellas */
+.star{
+  position:absolute;
+  width:2px;height:2px;
+  background:white;border-radius:50%;
+  opacity:0;animation:twinkle 3s infinite;
+}
+@keyframes twinkle{50%{opacity:1;}}
 
-    @keyframes float {
-      0% { transform: translateY(100vh); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateY(-10vh); opacity: 0; }
-    }
-  </style>
+/* Card */
+.card{
+  background:rgba(255,255,255,0.18);
+  padding:clamp(1.5rem,4vw,3rem);
+  border-radius:24px;
+  max-width:560px;width:100%;
+  max-height:90vh;overflow-y:auto;
+  backdrop-filter:blur(14px);
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  text-align:center;
+}
+
+.card.vibrate{animation:vibrar .25s infinite alternate;}
+@keyframes vibrar{
+  from{transform:translate(1px,-1px);}
+  to{transform:translate(-1px,1px);}
+}
+
+h1{font-size:clamp(1.5rem,4vw,2.2rem);}
+p{font-size:clamp(1rem,2.5vw,1.1rem);}
+
+button{
+  margin-top:1rem;
+  padding:.9rem 1.8rem;
+  border:none;border-radius:30px;
+  background:var(--rosa);color:white;
+  font-size:clamp(.95rem,2.5vw,1rem);
+  cursor:pointer;width:100%;max-width:260px;
+}
+
+#carta{text-align:left;margin-top:1.2rem;line-height:1.6;}
+#carta strong{color:#fff6c9;}
+
+#pregunta,#respuestas{
+  margin-top:1.2rem;
+  opacity:0;visibility:hidden;
+  transition:opacity 1s ease;
+}
+.mostrar{opacity:1!important;visibility:visible!important;}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Corazones */
+.heart {
+  position: absolute;
+  animation: subir 6s linear forwards;
+  opacity: 0;
+}
+@keyframes subir {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* Canvas */
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- 🎵 AUDIO DESDE ONEDRIVE -->
-  <audio id="musica" loop preload="auto">
-    <source src="https://www.dropbox.com/scl/fi/x0zybmvanqoi3kl1ozuf7/One-Piece-Ending-1-Memories-Sub-mp3cut.net.mp3?rlkey=lii70hxs5eq1pn6g1dho65icm&st=438qr7a7&raw=1" type="audio/mpeg">
-  </audio>
+<div id="fondo"><div class="aurora"></div></div>
+<audio id="musica" loop>
+  <source src="https://www.dropbox.com/scl/fi/q9yslidz4h27xqndg335t/She-is-Clazziquai.mp3?rlkey=5cuk7pcxhk1ld42vaqqo1jn4z&st=r5bmkd33&raw=1" type="audio/mpeg">
+</audio>
 
-  <div class="card">
-    <h1>Para Ti 💕</h1>
-    <p>Hay algo que quiero decirte…</p>
-    <button onclick="iniciar()">Ábreme 💌</button>
-    <div id="carta"></div>
+<canvas id="confetti"></canvas>
+<canvas id="fireworks"></canvas>
+
+<div class="card" id="modal">
+  <h1>Para Ti Mi Poshi 💕</h1>
+  <p>Hay algo que quiero decirte…</p>
+
+  <button onclick="iniciar()">Ábreme 💌</button>
+
+  <div id="carta"></div>
+
+  <div id="pregunta">¿Quieres seguir siendo mi San Valentín? 💖</div>
+  <div id="respuestas">
+    <button onclick="respuesta('Sí 💕')">Sí 💕</button>
+    <button onclick="respuesta('Obvio 😌')">Obvio 😌</button>
   </div>
+</div>
 
-  <script>
-    const carta = document.getElementById("carta");
-    const musica = document.getElementById("musica");
+<script>
+/* CARTA */
+const bloques=[
+"<strong>Mi poshi,</strong> hoy quiero detener el tiempo para recordarte lo especial que eres para mí.",
+"Han pasado <strong>4 años desde que nos casamos</strong>, y cada día confirmo que elegirte fue la mejor decisión de mi vida.",
+"Hemos vivido risas, retos y aprendizajes, pero siempre juntos, creciendo y apoyándonos.",
+"Gracias por ser mi hogar, mi compañera y el amor de mi vida.",
+"Hoy y siempre, <strong>te vuelvo a elegir.</strong> 💍💖"
+];
 
-    const textoCarta = `
-Desde que llegaste,
-mi mundo es un lugar más bonito.
+let index = 0;
+const carta = document.getElementById("carta");
 
-No sé qué nos depare el futuro,
-pero sí sé que me encanta compartirlo contigo.
+/* Estrellas */
+const estrellas = window.innerWidth < 600 ? 80 : 160;
+for(let i=0;i<estrellas;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.style.top=Math.random()*100+"%";
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDuration=(Math.random()*3+2)+"s";
+  document.body.appendChild(s);
+}
 
-Gracias por ser tú 💖
-`;
+/* CORAZONES */
+let intervaloCorazones;
+function crearCorazon(){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML=["❤️","💖","💕","💘"][Math.floor(Math.random()*4)];
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(Math.random()*22+16)+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(), 6000);
+}
 
-    let i = 0;
+function iniciarCorazones(){
+  intervaloCorazones = setInterval(crearCorazon, 700);
+}
 
-    function iniciar() {
-      musica.play().catch(() => {});
-      escribir();
-      for (let j = 0; j < 20; j++) crearCorazon();
-    }
+/* VIBRACIÓN */
+function vibrar(){
+  if(navigator.vibrate) navigator.vibrate(200);
+}
 
-    function escribir() {
-      if (i < textoCarta.length) {
-        carta.innerHTML += textoCarta.charAt(i++);
-        setTimeout(escribir, 40);
-      }
-    }
+/* CONFETI */
+const confettiCanvas = document.getElementById("confetti");
+const cctx = confettiCanvas.getContext("2d");
+confettiCanvas.width = innerWidth;
+confettiCanvas.height = innerHeight;
+let confettis = [];
+let confettiActivo = false;
+const maxConfetti = window.innerWidth < 600 ? 80 : 150;
 
-    function crearCorazon() {
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.innerHTML = "❤️";
-      h.style.left = Math.random() * 100 + "vw";
-      h.style.animationDuration = (Math.random() * 2 + 3) + "s";
-      document.body.appendChild(h);
-      setTimeout(() => h.remove(), 4000);
-    }
-  </script>
+function resizeConfetti(){
+  confettiCanvas.width = innerWidth;
+  confettiCanvas.height = innerHeight;
+}
+window.addEventListener("resize", resizeConfetti);
+
+function crearConfetti(){
+  if(!confettiActivo) return;
+  confettis.push({
+    x: Math.random() * confettiCanvas.width,
+    y: -10,
+    r: Math.random() * 4 + 3,
+    d: Math.random() * 1 + 1,
+    c: ["#ff3366","#fff","#ffcc00","#ff99cc"][Math.floor(Math.random()*4)]
+  });
+}
+
+function animarConfetti(){
+  cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  if(confettiActivo && confettis.length < maxConfetti) crearConfetti();
+
+  confettis.forEach((p, i) => {
+    cctx.fillStyle = p.c;
+    cctx.beginPath();
+    cctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    cctx.fill();
+    p.y += p.d;
+    if(p.y > confettiCanvas.height) confettis.splice(i,1);
+  });
+
+  requestAnimationFrame(animarConfetti);
+}
+animarConfetti();
+
+/* FUEGOS ARTIFICIALES */
+const fwCanvas = document.getElementById("fireworks");
+const fctx = fwCanvas.getContext("2d");
+fwCanvas.width = innerWidth;
+fwCanvas.height = innerHeight;
+let sparks = [];
+let fuegosActivos = false;
+
+function resizeFireworks(){
+  fwCanvas.width = innerWidth;
+  fwCanvas.height = innerHeight;
+}
+window.addEventListener("resize", resizeFireworks);
+
+function crearFuego(){
+  if(!fuegosActivos) return;
+  const x = Math.random() * fwCanvas.width;
+  const y = Math.random() * fwCanvas.height / 2;
+  for(let i=0; i<25; i++){
+    sparks.push({
+      x, y,
+      vx: (Math.random()-0.5)*4,
+      vy: (Math.random()-0.5)*4,
+      life: 50
+    });
+  }
+}
+
+setInterval(crearFuego, 1200);
+
+function animarFuegos(){
+  fctx.clearRect(0,0,fwCanvas.width, fwCanvas.height);
+  sparks.forEach((s, i) => {
+    fctx.fillStyle = "rgba(255,200,200,.8)";
+    fctx.fillRect(s.x, s.y, 2, 2);
+    s.x += s.vx;
+    s.y += s.vy;
+    s.life--;
+    if(s.life <= 0) sparks.splice(i,1);
+  });
+  requestAnimationFrame(animarFuegos);
+}
+animarFuegos();
+
+/* ESCRIBIR CARTA */
+function iniciar(){
+    const audio=document.getElementById("musica");
+    audio.volume=0.8;
+    audio.play().catch(()=>{});
+  document.getElementById("modal").classList.add("vibrate");
+  escribir();
+  iniciarCorazones();
+}
+
+function escribir(){
+  if(index < bloques.length){
+    carta.innerHTML += bloques[index] + "<br><br>";
+    index++;
+    setTimeout(escribir, 600);
+  } else {
+    pregunta.classList.add("mostrar");
+    respuestas.classList.add("mostrar");
+  }
+}
+
+/* RESPUESTA */
+function respuesta(valor){
+  vibrar();
+  clearInterval(intervaloCorazones);
+
+  // ACTIVA CONFETI + FUEGOS SOLO AL ACEPTAR
+  confettiActivo = true;
+  fuegosActivos = true;
+
+  respuestas.innerHTML = `
+    <p style="font-size:1.4rem;animation:fadeIn 1s;">
+      Me encanta que hayas dicho <strong>${valor}</strong> 💖✨<br>
+      Gracias por estos 4 años increíbles 💍
+    </p>
+  `;
+}
+</script>
 
 </body>
 </html>
