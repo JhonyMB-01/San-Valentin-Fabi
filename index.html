@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Para Ti 💖</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
@@ -13,7 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: system-ui, Arial, sans-serif;
+      font-family: 'Georgia', serif;
       overflow: hidden;
       color: white;
       text-align: center;
@@ -21,122 +20,96 @@
 
     .card {
       background: rgba(255, 255, 255, 0.18);
-      padding: 36px 28px;
-      border-radius: 24px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 380px;
       backdrop-filter: blur(8px);
-      max-width: 360px;
-      animation: appear 1s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
-    h1 {
-      font-size: 2.2em;
-      margin-bottom: 12px;
-    }
-
-    p {
-      font-size: 1.1em;
-      line-height: 1.5;
-    }
-
-    button, a.btn {
-      margin-top: 22px;
-      padding: 14px 28px;
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
       font-size: 1em;
       border: none;
-      border-radius: 999px;
+      border-radius: 30px;
       background: #ff3366;
       color: white;
       cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
     }
 
-    #mensaje {
-      margin-top: 18px;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-
-    #mensaje.show {
-      opacity: 1;
+    #carta {
+      margin-top: 20px;
+      font-size: 1.1em;
+      line-height: 1.6;
+      white-space: pre-line;
+      min-height: 120px;
     }
 
     .heart {
-      position: fixed;
-      bottom: -30px;
-      pointer-events: none;
-      animation: float linear forwards;
+      position: absolute;
+      font-size: 24px;
+      animation: float 4s linear infinite;
     }
 
     @keyframes float {
-      0% { transform: translateY(0) scale(0.6); opacity: 0; }
-      20% { opacity: 1; }
-      100% { transform: translateY(-120vh) scale(1.3); opacity: 0; }
-    }
-
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
     }
   </style>
 </head>
-
 <body>
 
-  <div class="card" id="app">
-    <h1>Para Ti 💕</h1>
-    <p id="texto">
-      Desde que llegaste a mi vida,<br>
-      todo tiene más sentido.
-    </p>
+  <!-- 🎵 AUDIO DESDE ONEDRIVE -->
+  <audio id="musica" loop preload="auto">
+    <source src="https://www.dropbox.com/scl/fi/x0zybmvanqoi3kl1ozuf7/One-Piece-Ending-1-Memories-Sub-mp3cut.net.mp3?rlkey=lii70hxs5eq1pn6g1dho65icm&st=438qr7a7&raw=1" type="audio/mpeg">
+  </audio>
 
-    <button id="btn">Toca aquí 💌</button>
-    <p id="mensaje"></p>
+  <div class="card">
+    <h1>Para Ti 💕</h1>
+    <p>Hay algo que quiero decirte…</p>
+    <button onclick="iniciar()">Ábreme 💌</button>
+    <div id="carta"></div>
   </div>
 
   <script>
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const carta = document.getElementById("carta");
+    const musica = document.getElementById("musica");
 
-    if (isIOS) {
-      // 👉 VERSIÓN IPHONE
-      document.getElementById("app").innerHTML = `
-        <h1>Para Ti 💖</h1>
-        <p>
-          Tengo algo muy especial para ti.<br>
-          Ábrelo aquí para verlo completo ✨
-        </p>
-        <a class="btn" href="https://TU-LINK-AQUI.netlify.app" target="_blank">
-          Abrir sorpresa 💝
-        </a>
-      `;
-    } else {
-      // 👉 VERSIÓN ANDROID / PC
-      const btn = document.getElementById("btn");
-      const msg = document.getElementById("mensaje");
+    const textoCarta = `
+Desde que llegaste,
+mi mundo es un lugar más bonito.
 
-      btn.addEventListener("click", () => {
-        msg.textContent = "Te quiero más de lo que las palabras pueden decir 💖";
-        msg.classList.add("show");
-        lanzarCorazones(22);
-      });
+No sé qué nos depare el futuro,
+pero sí sé que me encanta compartirlo contigo.
 
-      function lanzarCorazones(n) {
-        for (let i = 0; i < n; i++) {
-          setTimeout(crearCorazon, i * 120);
-        }
+Gracias por ser tú 💖
+`;
+
+    let i = 0;
+
+    function iniciar() {
+      musica.play().catch(() => {});
+      escribir();
+      for (let j = 0; j < 20; j++) crearCorazon();
+    }
+
+    function escribir() {
+      if (i < textoCarta.length) {
+        carta.innerHTML += textoCarta.charAt(i++);
+        setTimeout(escribir, 40);
       }
+    }
 
-      function crearCorazon() {
-        const h = document.createElement("div");
-        h.className = "heart";
-        h.textContent = "❤️";
-        h.style.left = Math.random() * 100 + "vw";
-        h.style.fontSize = Math.random() * 14 + 18 + "px";
-        h.style.animationDuration = Math.random() * 2 + 4 + "s";
-        document.body.appendChild(h);
-        h.addEventListener("animationend", () => h.remove());
-      }
+    function crearCorazon() {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.innerHTML = "❤️";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.animationDuration = (Math.random() * 2 + 3) + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 4000);
     }
   </script>
 
